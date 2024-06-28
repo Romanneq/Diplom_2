@@ -8,10 +8,10 @@ class TestCreateOrder:
 
     @allure.title('Можно создать заказ с авторизацией')
     @allure.description('Регистрирую пользователя, авторизуюсь, получаю хэш ингредиентов, создаю заказ')
-    def test_create_order_with_authorization_code_200(self, generating_the_cour_and_delete_the_cour):
-        payload = {"name": generating_the_cour_and_delete_the_cour[0],
-                   "email": generating_the_cour_and_delete_the_cour[1],
-                   "password": generating_the_cour_and_delete_the_cour[2]}
+    def test_create_order_with_authorization_code_200(self, generating_the_user_and_delete_the_user):
+        payload = {"name": generating_the_user_and_delete_the_user[0],
+                   "email": generating_the_user_and_delete_the_user[1],
+                   "password": generating_the_user_and_delete_the_user[2]}
         res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
         requests.post(f'{URL}{Endpoint.login_user}', data=payload)
         response_data_ing = requests.get(f'{URL}{Endpoint.data_ing}')
@@ -34,10 +34,10 @@ class TestCreateOrder:
 
     @allure.title('Нельзя создать заказ с авторизацией, но без ингредиентов')
     @allure.description('Регистрирую пользователя, авторизуюсь, создаю заказ без ингредиентов')
-    def test_create_order_without_ing_with_auth_code_400(self, generating_the_cour_and_delete_the_cour):
-        payload = {"name": generating_the_cour_and_delete_the_cour[0],
-                   "email": generating_the_cour_and_delete_the_cour[1],
-                   "password": generating_the_cour_and_delete_the_cour[2]}
+    def test_create_order_without_ing_with_auth_code_400(self, generating_the_user_and_delete_the_user):
+        payload = {"name": generating_the_user_and_delete_the_user[0],
+                   "email": generating_the_user_and_delete_the_user[1],
+                   "password": generating_the_user_and_delete_the_user[2]}
         res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
         requests.post(f'{URL}{Endpoint.login_user}', data=payload)
         _ing = {"ingredients": []}
@@ -48,10 +48,10 @@ class TestCreateOrder:
     @allure.title('Нельзя создать заказ с авторизацией и с неверным хэшем ингредиентов')
     @allure.description('Регистрирую пользователя, авторизуюсь, передаю неверный хэш ингредиентов, создаю заказ. '
                         'Для ревьюера: в документации к API ошибки 500 вообще быть не должно.')
-    def test_create_order_with_incorrect_ing_with_auth_code_500(self, generating_the_cour_and_delete_the_cour):
-        payload = {"name": generating_the_cour_and_delete_the_cour[0],
-                   "email": generating_the_cour_and_delete_the_cour[1],
-                   "password": generating_the_cour_and_delete_the_cour[2]}
+    def test_create_order_with_incorrect_ing_with_auth_code_500(self, generating_the_user_and_delete_the_user):
+        payload = {"name": generating_the_user_and_delete_the_user[0],
+                   "email": generating_the_user_and_delete_the_user[1],
+                   "password": generating_the_user_and_delete_the_user[2]}
         res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
         requests.post(f'{URL}{Endpoint.login_user}', data=payload)
         _ing = {"ingredients": ['11111', '6565656', '3333333']}

@@ -12,10 +12,10 @@ class TestLoginUser:
                         'в документации к API ключа "name" нет, нарушен порядок ключей. Также в документации API '
                         'ничего не сказано про передачу токена авторизации в ручку создания заказа для отображения '
                         'заказа у пользователя')
-    def test_get_orders_user_with_authorization_code_200(self, generating_the_cour_and_delete_the_cour):
-        payload = {"name": generating_the_cour_and_delete_the_cour[0],
-                   "email": generating_the_cour_and_delete_the_cour[1],
-                   "password": generating_the_cour_and_delete_the_cour[2]}
+    def test_get_orders_user_with_authorization_code_200(self, generating_the_user_and_delete_the_user):
+        payload = {"name": generating_the_user_and_delete_the_user[0],
+                   "email": generating_the_user_and_delete_the_user[1],
+                   "password": generating_the_user_and_delete_the_user[2]}
         res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
         res_log = requests.post(f'{URL}{Endpoint.login_user}', data=payload)
         token = res_log.json()['accessToken']
