@@ -1,1 +1,0 @@
-{'success': True, 'orders': [{'_id': '667e8fcf9ed280001b453751', 'ingredients': ['61c0c5a71d1f82001bdaaa6d', '61c0c5a71d1f82001bdaaa6f', '61c0c5a71d1f82001bdaaa70'], 'status': 'done', 'name': 'Бессмертный метеоритный флюоресцентный бургер', 'createdAt': '2024-06-28T10:26:23.600Z', 'updatedAt': '2024-06-28T10:26:24.254Z', 'number': 87221}], 'total': 87221, 'totalToday': 547}

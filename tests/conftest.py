@@ -37,8 +37,8 @@ def generating_the_user_and_delete_the_user():
     yield new_user
 
     try:
-        login_user = requests.post(f'{URL}{Endpoint.login_user}', data=payload)  # логин user
-        token = login_user.json()['accessToken'] # получение accessToken
-        del_user = requests.delete(f'{URL}{Endpoint.del_and_change_user}', headers={'Authorization': token})  # удаление user
+        login_user = requests.post(f'{URL}{Endpoint.LOGIN_USER}', data=payload)  # логин user
+        token = login_user.json()['accessToken']  # получение accessToken
+        del_user = requests.delete(f'{URL}{Endpoint.DEL_AND_CHANGE_USER}', headers={'Authorization': token})  # удаление user
     except KeyError:
         pass

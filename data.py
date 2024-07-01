@@ -2,8 +2,8 @@ URL = 'https://stellarburgers.nomoreparties.site/'
 
 
 class Endpoint:
-    create_user = 'api/auth/register'
-    del_and_change_user = 'api/auth/user'
-    login_user = 'api/auth/login'
-    create_and_get_order = 'api/orders'
-    data_ing = 'api/ingredients'
+    CREATE_USER = 'api/auth/register'
+    DEL_AND_CHANGE_USER = 'api/auth/user'
+    LOGIN_USER = 'api/auth/login'
+    CREATE_AND_GET_ORDER = 'api/orders'
+    DATA_ING = 'api/ingredients'

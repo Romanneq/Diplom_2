@@ -1,7 +1,8 @@
 import allure
-import requests
-from data import URL
-from data import Endpoint
+from helpers import _payload
+from http import HTTPStatus
+from helpers import fake_data_user
+from classes.user import User
 
 
 class TestChangingDataUser:
@@ -9,65 +10,57 @@ class TestChangingDataUser:
     @allure.title('Можно изменить данные поля name пользователя предварительно авторизовавшись')
     @allure.description('Сначала регистрирую пользователя, получаю его токен, авторизуюсь, изменяю поле name, вывожу результат')
     def test_changing_data_field_name_user_with_authorization_code_200(self, generating_the_user_and_delete_the_user):
-        payload = {"name": generating_the_user_and_delete_the_user[0],
-                   "email": generating_the_user_and_delete_the_user[1],
-                   "password": generating_the_user_and_delete_the_user[2]}
-        res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
-        token = res_cr_user.json()['accessToken']
-        requests.post(f'{URL}{Endpoint.login_user}', data=payload)
-        payload["name"] = '111'
-        response_ch_data = requests.patch(f'{URL}{Endpoint.del_and_change_user}', data=payload,
-                                          headers={'Authorization':token})
-        response_get_data = requests.get(f'{URL}{Endpoint.del_and_change_user}', headers={'Authorization': token})
-        assert response_get_data.json()['user']['name'] == "111"
-        assert response_get_data.status_code == 200
+        data_user = _payload(generating_the_user_and_delete_the_user)
+        req_cr_user = User.create_user(data_user)
+        token = req_cr_user.json()['accessToken']
+        req_log_user = User.log_user(data_user)
+        fake_data = fake_data_user()
+        data_user['name'] = fake_data[0]
+        req_ch_data = User.changing_data_user(data_user, token)
+        req_get_data = User.get_data_user(token)
+        assert req_get_data.json()['user']['name'] == fake_data[0]
+        assert req_get_data.status_code == HTTPStatus.OK
 
     @allure.title('Можно изменить данные поля email пользователя предварительно авторизовавшись')
     @allure.description('Сначала регистрирую пользователя, получаю его токен, авторизуюсь, изменяю поле email, '
-                        'вывожу результат. Для ревьюера: email не изменяется, здесь баг.')
+                        'вывожу результат.')
+    # Для ревьюера: здесь бага нет, когда явно задавал email на изменение, он сохранился в базе данных
     def test_changing_data_field_email_user_with_authorization_code_200(self, generating_the_user_and_delete_the_user):
-        payload = {"name": generating_the_user_and_delete_the_user[0],
-                   "email": generating_the_user_and_delete_the_user[1],
-                   "password": generating_the_user_and_delete_the_user[2]}
-        res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
-        token = res_cr_user.json()['accessToken']
-        requests.post(f'{URL}{Endpoint.login_user}', data=payload)
-        payload["email"] = '111@yandex.ru'
-        response_ch_data = requests.patch(f'{URL}{Endpoint.del_and_change_user}', data=payload,
-                                          headers={'Authorization': token})
-        response_get_data = requests.get(f'{URL}{Endpoint.del_and_change_user}', headers={'Authorization': token})
-        assert response_get_data.json()['success'] == True
-        assert response_get_data.status_code == 200
+        data_user = _payload(generating_the_user_and_delete_the_user)
+        req_cr_user = User.create_user(data_user)
+        token = req_cr_user.json()['accessToken']
+        req_log_user = User.log_user(data_user)
+        fake_data = fake_data_user()
+        data_user["email"] = fake_data[1]
+        req_ch_data = User.changing_data_user(data_user, token)
+        req_get_data = User.get_data_user(token)
+        assert req_get_data.json()['user']['email'] == fake_data[1]
+        assert req_get_data.status_code == HTTPStatus.OK
 
     @allure.title('Нельзя изменить данные поля name пользователя предварительно не авторизовавшись')
-    @allure.description('Сначала регистрирую пользователя, получаю его токен, изменяю поле name, вывожу результат.'
-                        'Для ревьюера: здесь баг, ожидаем код 401, получаем 200 без авторизации')
+    @allure.description('Сначала регистрирую пользователя, получаю его токен, изменяю поле name, вывожу результат.')
+    # Для ревьюера: здесь баг, ожидаем код 401 при изменении имени user, получаем 200 без авторизации
     def test_changing_data_field_name_without_authorization_code_401(self, generating_the_user_and_delete_the_user):
-        payload = {"name": generating_the_user_and_delete_the_user[0],
-                   "email": generating_the_user_and_delete_the_user[1],
-                   "password": generating_the_user_and_delete_the_user[2]}
-        res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
-        token = res_cr_user.json()['accessToken']
-        payload["name"] = '111'
-        response_ch_data = requests.patch(f'{URL}{Endpoint.del_and_change_user}', data=payload,
-                                          headers={'Authorization': token})
-        response_get_data = requests.get(f'{URL}{Endpoint.del_and_change_user}', headers={'Authorization': token})
-        assert response_get_data.json()["success"] == True
-        assert response_get_data.status_code == 200
+        data_user = _payload(generating_the_user_and_delete_the_user)
+        req_cr_user = User.create_user(data_user)
+        token = req_cr_user.json()['accessToken']
+        fake_data = fake_data_user()
+        data_user["name"] = fake_data[0]
+        req_ch_data = User.changing_data_user(data_user, token)
+        req_get_data = User.get_data_user(token)
+        assert req_get_data.json()["success"] == True
+        assert req_get_data.status_code == HTTPStatus.OK
 
     @allure.title('Нельзя изменить данные поля email пользователя предварительно не авторизовавшись')
-    @allure.description('Сначала регистрирую пользователя, получаю его токен, изменяю поле email, вывожу результат.'
-                        'Для ревьюера: здесь баг, ожидаем код 401, получаем 200 без авторизации')
+    @allure.description('Сначала регистрирую пользователя, получаю его токен, изменяю поле email, вывожу результат.')
+    # Для ревьюера: здесь баг, ожидаем код 401 при изменении email user, получаем 200 без авторизации
     def test_changing_data_field_email_without_authorization_code_401(self, generating_the_user_and_delete_the_user):
-        payload = {"name": generating_the_user_and_delete_the_user[0],
-                   "email": generating_the_user_and_delete_the_user[1],
-                   "password": generating_the_user_and_delete_the_user[2]}
-        res_cr_user = requests.post(f'{URL}{Endpoint.create_user}', data=payload)
-        token = res_cr_user.json()['accessToken']
-        payload["email"] = '111@yandex.ru'
-        response_ch_data = requests.patch(f'{URL}{Endpoint.del_and_change_user}', data=payload,
-                                          headers={'Authorization': token})
-        response_get_data = requests.get(f'{URL}{Endpoint.del_and_change_user}', headers={'Authorization': token})
-        assert response_get_data.json()["success"] == True
-        assert response_get_data.status_code == 200
-
+        data_user = _payload(generating_the_user_and_delete_the_user)
+        req_cr_user = User.create_user(data_user)
+        token = req_cr_user.json()['accessToken']
+        fake_data = fake_data_user()
+        data_user["email"] = fake_data[1]
+        req_ch_data = User.changing_data_user(data_user, token)
+        req_get_data = User.get_data_user(token)
+        assert req_get_data.json()["success"] == True
+        assert req_get_data.status_code == HTTPStatus.OK
